@@ -11,6 +11,7 @@ repository = "https://github.com/atsuhiro/codegen-for-async-graphql"
 keywords = ["graphql", "async-graphql"]
 categories = ["network-programming", "web-programming"]
 readme = "README.md"
+default-run = "cargo-codegen-for-async-graphql"
 
 [[bin]]
 name = "cargo-codegen-for-async-graphql"
