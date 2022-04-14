@@ -138,7 +138,7 @@ pub trait SupportType: RenderType {
                 Type::NonNull(t) => match &**t {
                     Type::Named(name) => name.clone(),
                     _ => unreachable!("Not Implemented"),
-                }
+                },
                 _ => unreachable!("Not Implemented"),
             },
             _ => unreachable!("Not Implemented"),
