@@ -103,20 +103,14 @@ pub trait SupportType: RenderType {
 
     #[must_use]
     fn non_null(&self) -> bool {
-        match &self.ty() {
-            Type::NonNull(_t) => true,
-            _ => false,
-        }
+        matches!(self.ty(), Type::NonNull(_t))
     }
 
     #[must_use]
     fn is_list(&self) -> bool {
         match &self.ty() {
             Type::List(_t) => true,
-            Type::NonNull(t) => match &**t {
-                Type::List(_t) => true,
-                _ => false,
-            },
+            Type::NonNull(t) => matches!(&**t, Type::List(_t)),
             _ => false,
         }
     }
@@ -126,7 +120,7 @@ pub trait SupportType: RenderType {
         match &self.ty() {
             Type::Named(name) => name.clone(),
             Type::NonNull(t) => Self::nested_type_name(t),
-            Type::List(_) => Self::nested_type_name(&self.ty()),
+            Type::List(_) => Self::nested_type_name(self.ty()),
         }
     }
 
@@ -181,13 +175,7 @@ pub trait SupportTypeName: SupportType + UseContext {
     }
 
     fn is_default_scalar(&self) -> bool {
-        match &self.scalar_type() {
-            Some(t) => match t {
-                ScalarTypeOnScalar::DefaultScalar => true,
-                _ => false,
-            },
-            _ => false,
-        }
+        matches!(&self.scalar_type(), Some(ScalarTypeOnScalar::DefaultScalar))
     }
 
     #[must_use]
@@ -202,10 +190,7 @@ pub trait SupportTypeName: SupportType + UseContext {
 
     #[must_use]
     fn is_scalar(&self) -> bool {
-        match &self.scalar_type() {
-            Some(_t) => true,
-            _ => false,
-        }
+        matches!(&self.scalar_type(), Some(_t))
     }
 
     fn is_input_object_type(&self) -> bool {
@@ -222,13 +207,7 @@ pub trait SupportTypeName: SupportType + UseContext {
 
     #[must_use]
     fn is_custom_scalar(&self) -> bool {
-        match &self.scalar_type() {
-            Some(t) => match t {
-                ScalarTypeOnScalar::CustomScalar => true,
-                _ => false,
-            },
-            _ => false,
-        }
+        matches!(&self.scalar_type(), Some(ScalarTypeOnScalar::CustomScalar))
     }
 
     fn super_module_name(&self) -> Option<String> {
