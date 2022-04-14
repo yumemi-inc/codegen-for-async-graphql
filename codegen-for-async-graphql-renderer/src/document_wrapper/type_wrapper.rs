@@ -125,7 +125,8 @@ pub trait SupportType: RenderType {
     fn type_name(&self) -> String {
         match &self.ty() {
             Type::Named(name) => name.clone(),
-            Type::NonNull(t) | Type::List(t) => Self::nested_type_name(t),
+            Type::NonNull(t) => Self::nested_type_name(t),
+            Type::List(_) => Self::nested_type_name(&self.ty()),
         }
     }
 
@@ -134,7 +135,10 @@ pub trait SupportType: RenderType {
         match &*t {
             Type::Named(name) => name.clone(),
             Type::List(t) => match &**t {
-                Type::Named(name) => name.clone(),
+                Type::NonNull(t) => match &**t {
+                    Type::Named(name) => name.clone(),
+                    _ => unreachable!("Not Implemented"),
+                }
                 _ => unreachable!("Not Implemented"),
             },
             _ => unreachable!("Not Implemented"),
