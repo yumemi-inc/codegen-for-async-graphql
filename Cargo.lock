@@ -392,6 +392,7 @@ name = "codegen-for-async-graphql"
 version = "0.2.7"
 dependencies = [
  "clap",
+ "clap_derive",
  "codegen-for-async-graphql-renderer",
 ]
 
