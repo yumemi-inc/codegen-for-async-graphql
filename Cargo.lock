@@ -412,6 +412,9 @@ dependencies = [
  "async-graphql-parser",
  "proc-macro2",
  "quote",
+ "serde",
+ "serde_derive",
+ "serde_json",
  "toolchain_find",
 ]
 
