@@ -16,6 +16,7 @@ categories = ["network-programming", "web-programming"]
 [dependencies]
 async-graphql = "~1.16.9"
 async-graphql-parser = "~1.16.6"
+async-graphql-derive = "~1.16.6"
 proc-macro2 = { version = "1.0", default-features = false }
 quote = "1.0.7"
 toolchain_find = "0.1"
