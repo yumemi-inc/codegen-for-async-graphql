@@ -17,7 +17,7 @@ name = "cargo-codegen-for-async-graphql"
 path = "src/codegen.rs"
 
 [dependencies]
-clap = "3.0.0-beta.1"
+clap = "= 3.0.0-beta.1"
 codegen-for-async-graphql-renderer= { path = "codegen-for-async-graphql-renderer", version = "0.2.7" }
 
 [workspace]
