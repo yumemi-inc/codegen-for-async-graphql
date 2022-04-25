@@ -1,4 +1,4 @@
-use super::{FileRender, RenderType, Save, ScalarTypeWrapper};
+use super::{Save, ScalarTypeWrapper};
 
 use quote::quote;
 

@@ -1,6 +1,6 @@
 use super::Config;
-use async_graphql_parser::schema::{Definition, Document, TypeDefinition};
 use std::collections::HashMap;
+use async_graphql_parser::types::{TypeDefinition, TypeSystemDefinition};
 
 use crate::document_wrapper::{
     FileRender, InputObjectTypeWrapper, InterfaceTypeWrapper, MutationsTypeWrapper, ObjectPath,
@@ -110,8 +110,8 @@ impl<'a> Context<'a> {
             .definitions
             .iter()
             .filter_map(|f| match &f.node {
-                Definition::TypeDefinition(n) => Some(&n.node),
-                Definition::SchemaDefinition(_n) => None,
+                TypeSystemDefinition::Type(n) => Some(&n.node),
+                TypeSystemDefinition::Schema(_n) => None,
                 _ => panic!("Not implemented:{:?}", f),
             })
             .collect()

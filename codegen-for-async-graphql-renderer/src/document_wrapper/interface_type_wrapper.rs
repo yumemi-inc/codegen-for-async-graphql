@@ -1,4 +1,5 @@
 use async_graphql_parser::schema::InterfaceType;
+use async_graphql_parser::types::InterfaceType;
 
 use super::{
     BaseType, Dependency, FieldWrapper, FileRender, ObjectTypeWrapper, RenderType, SupportFields,
