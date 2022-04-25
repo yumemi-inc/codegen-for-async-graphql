@@ -20,7 +20,7 @@ impl Output for Generate {
             .clone()
             .scalar_types()
             .iter()
-            .map(|f| Renderer::new_and_token_stream(f))
+            .map(Renderer::new_and_token_stream)
             .collect()
     }
 }
