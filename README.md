@@ -1,6 +1,6 @@
 # codegen-for-async-graphql
 
-[![codecov](https://codecov.io/gh/atsuhiro/codegen-for-async-graphql/branch/master/graph/badge.svg)](https://codecov.io/gh/atsuhiro/codegen-for-async-graphql)
+[![github workflow status](https://img.shields.io/github/workflow/status/TaKO8Ki/gobang/CI/main)](https://github.com/yumemi-inc/codegen-for-async-graphql/actions)
 
 ## Usage
 
