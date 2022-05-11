@@ -1,6 +1,8 @@
 use super::Config;
+use async_graphql_parser::types::{
+    ServiceDocument, TypeDefinition, TypeKind, TypeSystemDefinition,
+};
 use std::collections::HashMap;
-use async_graphql_parser::types::{TypeDefinition, TypeSystemDefinition};
 
 use crate::document_wrapper::{
     FileRender, InputObjectTypeWrapper, InterfaceTypeWrapper, MutationsTypeWrapper, ObjectPath,
@@ -11,7 +13,7 @@ use crate::document_wrapper::{
 #[derive(Debug, Clone)]
 pub struct Context<'a> {
     pub config: &'a Config,
-    doc: &'a Document,
+    doc: &'a ServiceDocument,
 }
 
 fn get_paths<T>(obj: &[T]) -> Vec<ObjectPath>
@@ -23,7 +25,7 @@ where
 
 impl<'a> Context<'a> {
     #[must_use]
-    pub const fn new(config: &'a Config, doc: &'a Document) -> Self {
+    pub const fn new(config: &'a Config, doc: &'a ServiceDocument) -> Self {
         Self { config, doc }
     }
 
@@ -109,7 +111,7 @@ impl<'a> Context<'a> {
         self.doc
             .definitions
             .iter()
-            .filter_map(|f| match &f.node {
+            .filter_map(|f| match &f {
                 TypeSystemDefinition::Type(n) => Some(&n.node),
                 TypeSystemDefinition::Schema(_n) => None,
                 _ => panic!("Not implemented:{:?}", f),
@@ -121,11 +123,12 @@ impl<'a> Context<'a> {
     pub fn mutation_types(&self) -> Vec<MutationsTypeWrapper> {
         self.type_definition()
             .iter()
-            .filter_map(|f| match &f {
-                TypeDefinition::Object(f) => {
-                    if f.node.name.node == "Mutation" {
+            .filter_map(|f| match &f.kind {
+                TypeKind::Object(object) => {
+                    if f.name.node == "Mutation" {
                         return Some(MutationsTypeWrapper {
-                            doc: &f.node,
+                            kind: object,
+                            doc: f,
                             context: self,
                         });
                     }
@@ -140,11 +143,12 @@ impl<'a> Context<'a> {
     pub fn subscription_types(&self) -> Vec<SubscriptionRootTypeWrapper> {
         self.type_definition()
             .iter()
-            .filter_map(|f| match &f {
-                TypeDefinition::Object(f) => {
-                    if f.node.name.node == "Subscription" {
+            .filter_map(|f| match &f.kind {
+                TypeKind::Object(object) => {
+                    if f.name.node == "Subscription" {
                         return Some(SubscriptionRootTypeWrapper {
-                            doc: &f.node,
+                            kind: object,
+                            doc: f,
                             context: self,
                         });
                     }
@@ -159,16 +163,17 @@ impl<'a> Context<'a> {
     pub fn object_types(&self) -> Vec<ObjectTypeWrapper> {
         self.type_definition()
             .iter()
-            .filter_map(|f| match &f {
-                TypeDefinition::Object(f) => {
-                    if f.node.name.node == "Mutation" {
+            .filter_map(|f| match &f.kind {
+                TypeKind::Object(object) => {
+                    if f.name.node == "Mutation" {
                         return None;
                     }
-                    if f.node.name.node == "Subscription" {
+                    if f.name.node == "Subscription" {
                         return None;
                     }
                     Some(ObjectTypeWrapper {
-                        doc: &f.node,
+                        kind: object,
+                        doc: f,
                         context: self,
                     })
                 }
@@ -181,9 +186,10 @@ impl<'a> Context<'a> {
     pub fn scalar_types(&self) -> Vec<ScalarTypeWrapper> {
         self.type_definition()
             .iter()
-            .filter_map(|f| match &f {
-                TypeDefinition::Scalar(f) => Some(ScalarTypeWrapper {
-                    doc: &f.node,
+            .filter_map(|f| match &f.kind {
+                TypeKind::Scalar => Some(ScalarTypeWrapper {
+                    kind: f,
+                    doc: f,
                     context: self,
                 }),
                 _ => None,
@@ -195,9 +201,10 @@ impl<'a> Context<'a> {
     pub fn union_types(&self) -> Vec<UnionTypeWrapper> {
         self.type_definition()
             .iter()
-            .filter_map(|f| match &f {
-                TypeDefinition::Union(f) => Some(UnionTypeWrapper {
-                    doc: &f.node,
+            .filter_map(|f| match &f.kind {
+                TypeKind::Union(union) => Some(UnionTypeWrapper {
+                    kind: union,
+                    doc: &f,
                     context: self,
                 }),
                 _ => None,
@@ -209,9 +216,10 @@ impl<'a> Context<'a> {
     pub fn interface_types(&self) -> Vec<InterfaceTypeWrapper> {
         self.type_definition()
             .iter()
-            .filter_map(|f| match &f {
-                TypeDefinition::Interface(f) => Some(InterfaceTypeWrapper {
-                    doc: &f.node,
+            .filter_map(|f| match &f.kind {
+                TypeKind::Interface(interface) => Some(InterfaceTypeWrapper {
+                    kind: interface,
+                    doc: &f,
                     context: self,
                 }),
                 _ => None,
@@ -223,9 +231,10 @@ impl<'a> Context<'a> {
     pub fn input_object_types(&self) -> Vec<InputObjectTypeWrapper> {
         self.type_definition()
             .iter()
-            .filter_map(|f| match &f {
-                TypeDefinition::InputObject(f) => Some(InputObjectTypeWrapper {
-                    doc: &f.node,
+            .filter_map(|f| match &f.kind {
+                TypeKind::InputObject(input_object) => Some(InputObjectTypeWrapper {
+                    kind: input_object,
+                    doc: &f,
                     context: self,
                 }),
                 _ => None,

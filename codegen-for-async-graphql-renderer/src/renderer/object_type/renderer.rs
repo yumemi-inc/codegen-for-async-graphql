@@ -3,7 +3,8 @@ use quote::quote;
 use proc_macro2::{Ident, Span, TokenStream};
 
 use super::{
-    FieldRenderer, ObjectTypeWrapper, RenderDependencies, Save,
+    FieldRenderer, FileRender, ObjectTypeWrapper, RenderDependencies, RenderType, Save,
+    SupportFields,
 };
 
 pub struct Renderer<'a, 'b> {

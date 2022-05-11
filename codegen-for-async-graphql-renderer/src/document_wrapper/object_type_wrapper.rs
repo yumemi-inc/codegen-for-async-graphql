@@ -1,4 +1,4 @@
-use async_graphql_parser::schema::ObjectType;
+use async_graphql_parser::types::ObjectType;
 
 use super::{BaseType, FieldWrapper, FileRender, RenderType, SupportFields};
 
@@ -13,7 +13,7 @@ impl<'a, 'b> FileRender for ObjectTypeWrapper<'a, 'b> {
 impl<'a, 'b> RenderType for ObjectTypeWrapper<'a, 'b> {
     #[must_use]
     fn name(&self) -> String {
-        self.doc.name.node.clone()
+        self.doc.name.node.to_string()
     }
 
     #[must_use]
@@ -28,7 +28,7 @@ impl<'a, 'b> RenderType for ObjectTypeWrapper<'a, 'b> {
 impl<'a, 'b> SupportFields for ObjectTypeWrapper<'a, 'b> {
     #[must_use]
     fn fields(&self) -> Vec<FieldWrapper> {
-        self.doc
+        self.kind
             .fields
             .iter()
             .map(|f| FieldWrapper {
@@ -41,10 +41,10 @@ impl<'a, 'b> SupportFields for ObjectTypeWrapper<'a, 'b> {
 
 impl<'a, 'b> ObjectTypeWrapper<'a, 'b> {
     pub fn implements_interfaces(&self) -> Vec<String> {
-        self.doc
-            .implements_interfaces
+        self.kind
+            .implements
             .iter()
-            .map(|f| f.node.clone())
+            .map(|f| f.node.to_string())
             .collect()
     }
 }

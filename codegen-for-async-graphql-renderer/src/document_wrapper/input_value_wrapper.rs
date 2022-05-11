@@ -1,11 +1,11 @@
 use super::Context;
-use async_graphql_parser::schema::{InputValue, Type};
+use async_graphql_parser::types::{InputValueDefinition, Type};
 
 use super::{snake_case, RenderType, SupportType, SupportTypeName, UseContext};
 
 #[derive(Debug, Clone)]
 pub struct InputValueWrapper<'a, 'b> {
-    pub doc: &'a InputValue,
+    pub doc: &'a InputValueDefinition,
     pub context: &'a Context<'b>,
 }
 
@@ -18,7 +18,7 @@ impl<'a, 'b> SupportType for InputValueWrapper<'a, 'b> {
 impl<'a, 'b> RenderType for InputValueWrapper<'a, 'b> {
     #[must_use]
     fn name(&self) -> String {
-        self.doc.name.node.clone()
+        self.doc.name.node.to_string()
     }
 
     #[must_use]

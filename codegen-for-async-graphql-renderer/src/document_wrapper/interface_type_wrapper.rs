@@ -1,4 +1,3 @@
-use async_graphql_parser::schema::InterfaceType;
 use async_graphql_parser::types::InterfaceType;
 
 use super::{
@@ -16,7 +15,7 @@ impl<'a, 'b> FileRender for InterfaceTypeWrapper<'a, 'b> {
 impl<'a, 'b> RenderType for InterfaceTypeWrapper<'a, 'b> {
     #[must_use]
     fn name(&self) -> String {
-        self.doc.name.node.clone()
+        self.doc.name.node.to_string()
     }
 
     #[must_use]
@@ -31,7 +30,7 @@ impl<'a, 'b> RenderType for InterfaceTypeWrapper<'a, 'b> {
 impl<'a, 'b> SupportFields for InterfaceTypeWrapper<'a, 'b> {
     #[must_use]
     fn fields(&self) -> Vec<FieldWrapper> {
-        self.doc
+        self.kind
             .fields
             .iter()
             .map(|f| FieldWrapper {

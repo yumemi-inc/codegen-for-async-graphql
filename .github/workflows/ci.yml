@@ -30,7 +30,7 @@ jobs:
       - uses: Swatinem/rust-cache@v1
 
       - name: Check
-        run: cargo fmt --all -- --check
+        run: cargo check
 
   format:
     name: Format

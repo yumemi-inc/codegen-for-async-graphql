@@ -2,7 +2,7 @@ use std::fs;
 
 use super::render_to_files;
 use async_graphql_parser::parse_schema;
-use async_graphql_parser::schema::Document;
+use async_graphql_parser::types::ServiceDocument;
 
 use super::{Config, Context};
 
@@ -13,7 +13,7 @@ pub fn generate_from_path(path: &str, config: &Config) {
     render_to_files(&context);
 }
 
-fn parse(schema: &str) -> Document {
+fn parse(schema: &str) -> ServiceDocument {
     match parse_schema(schema) {
         Ok(f) => f,
         Err(e) => {

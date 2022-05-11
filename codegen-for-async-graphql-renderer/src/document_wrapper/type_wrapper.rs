@@ -1,5 +1,7 @@
 use super::{snake_case, Context, FieldWrapper, InputValueWrapper};
-use async_graphql_parser::schema::{InputValue, Type};
+use async_graphql_parser::types::{
+    BaseType as ParserBaseType, InputValueDefinition, Type, TypeDefinition,
+};
 
 pub trait RenderType {
     fn name(&self) -> String;
@@ -39,8 +41,9 @@ pub trait FileRender: RenderType {
 
 #[derive(Debug, Clone)]
 pub struct BaseType<'a, 'b, T> {
-    pub doc: &'a T,
+    pub doc: &'a TypeDefinition,
     pub context: &'a Context<'b>,
+    pub kind: &'a T,
 }
 
 pub trait UseContext {
@@ -73,7 +76,7 @@ pub trait SupportFields {
 }
 
 pub trait SupportField: UseContext {
-    fn input_value_types(&self) -> Vec<&InputValue>;
+    fn input_value_types(&self) -> Vec<&InputValueDefinition>;
 
     fn arguments(&self) -> Vec<InputValueWrapper> {
         self.input_value_types()
@@ -103,39 +106,39 @@ pub trait SupportType: RenderType {
 
     #[must_use]
     fn non_null(&self) -> bool {
-        matches!(self.ty(), Type::NonNull(_t))
+        !self.ty().nullable
     }
 
     #[must_use]
     fn is_list(&self) -> bool {
-        match &self.ty() {
-            Type::List(_t) => true,
-            Type::NonNull(t) => matches!(&**t, Type::List(_t)),
+        match &self.ty().base {
+            ParserBaseType::List(_t) => true,
+            t if !self.ty().nullable => matches!(t, ParserBaseType::List(_t)),
             _ => false,
         }
     }
 
     #[must_use]
     fn type_name(&self) -> String {
-        match &self.ty() {
-            Type::Named(name) => name.clone(),
-            Type::NonNull(t) => Self::nested_type_name(t),
-            Type::List(_) => Self::nested_type_name(self.ty()),
+        match &self.ty().base {
+            ParserBaseType::Named(name) => name.to_string(),
+            ParserBaseType::List(type_) => Self::nested_type_name(type_),
         }
     }
 
     #[must_use]
     fn nested_type_name(t: &Type) -> String {
-        match &*t {
-            Type::Named(name) => name.clone(),
-            Type::List(t) => match &**t {
-                Type::NonNull(t) => match &**t {
-                    Type::Named(name) => name.clone(),
-                    _ => unreachable!("Not Implemented"),
-                },
-                _ => unreachable!("Not Implemented"),
-            },
-            _ => unreachable!("Not Implemented"),
+        match &t.base {
+            ParserBaseType::Named(name) => name.to_string(),
+            ParserBaseType::List(t) => {
+                if t.nullable {
+                    unreachable!("Not Implemented")
+                } else if let ParserBaseType::Named(name) = &t.base {
+                    name.to_string()
+                } else {
+                    unreachable!("Not Implemented")
+                }
+            }
         }
     }
 
