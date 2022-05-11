@@ -1,4 +1,4 @@
-use async_graphql_parser::schema::UnionType;
+use async_graphql_parser::types::UnionType;
 
 use super::{BaseType, Dependency, FileRender, ObjectTypeWrapper, RenderType};
 
@@ -13,7 +13,7 @@ impl<'a, 'b> FileRender for UnionTypeWrapper<'a, 'b> {
 impl<'a, 'b> RenderType for UnionTypeWrapper<'a, 'b> {
     #[must_use]
     fn name(&self) -> String {
-        self.doc.name.node.clone()
+        self.doc.name.node.to_string()
     }
 
     #[must_use]
@@ -38,7 +38,11 @@ impl<'a, 'b> UnionTypeWrapper<'a, 'b> {
     }
 
     pub fn members(&self) -> Vec<String> {
-        self.doc.members.iter().map(|f| f.node.clone()).collect()
+        self.kind
+            .members
+            .iter()
+            .map(|f| f.node.to_string())
+            .collect()
     }
 
     pub fn implemented_object_types(&self) -> Vec<ObjectTypeWrapper> {

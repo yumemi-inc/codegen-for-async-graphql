@@ -1,8 +1,8 @@
-use clap::Clap;
+use clap::Parser;
 
 use codegen_for_async_graphql_renderer::{generate_from_path, Config};
 
-#[derive(Clap)]
+#[derive(Debug, Parser)]
 #[clap()]
 struct Opts {
     _dummy: Option<String>,

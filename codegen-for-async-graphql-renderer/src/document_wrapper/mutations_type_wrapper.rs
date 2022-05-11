@@ -1,4 +1,4 @@
-use async_graphql_parser::schema::ObjectType;
+use async_graphql_parser::types::{ObjectType, TypeDefinition};
 
 use super::{
     Context, Dependency, FileRender, MutationTypeWrapper, RenderType, SupportField, SupportTypeName,
@@ -6,7 +6,8 @@ use super::{
 
 #[derive(Debug)]
 pub struct MutationsTypeWrapper<'a, 'b> {
-    pub doc: &'a ObjectType,
+    pub kind: &'a ObjectType,
+    pub doc: &'a TypeDefinition,
     pub context: &'a Context<'b>,
 }
 
@@ -19,7 +20,7 @@ impl<'a, 'b> FileRender for MutationsTypeWrapper<'a, 'b> {
 impl<'a, 'b> RenderType for MutationsTypeWrapper<'a, 'b> {
     #[must_use]
     fn name(&self) -> String {
-        self.doc.name.node.clone()
+        self.doc.name.node.to_string()
     }
 
     #[must_use]
@@ -34,7 +35,7 @@ impl<'a, 'b> RenderType for MutationsTypeWrapper<'a, 'b> {
 impl<'a, 'b> MutationsTypeWrapper<'a, 'b> {
     #[must_use]
     pub fn mutations(&self) -> Vec<MutationTypeWrapper> {
-        self.doc
+        self.kind
             .fields
             .iter()
             .map(|f| MutationTypeWrapper {
